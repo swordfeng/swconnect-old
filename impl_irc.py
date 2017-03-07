@@ -8,7 +8,7 @@ import asyncio
 from util import printerr
 
 class IRCBot(Bot):
-    def __init__(self, server, port, nick, channels=[], enable_ssl=False, loop=asyncio.get_event_loop()):
+    def __init__(self, server, port, nick, channels=[], enable_ssl=True, loop=asyncio.get_event_loop()):
         super().__init__(f'irc-{server}:{port}-{nick}')
         self.channels = {}
         self.client = irc.client.Reactor()

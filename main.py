@@ -1,5 +1,6 @@
 
 from impl_telegram import *
+from impl_irc import *
 from interface import ChannelGroup, Message
 import asyncio
 import aiohttp
@@ -87,11 +88,12 @@ def connectHandler(message):
             except BaseException:
                 pass
 
-async def main():
-    session = aiohttp.ClientSession()
-    telegramBot = TelegramBot(config.telegramToken, session)
-    telegramBot.addHandler('connect', connectHandler)
+session = aiohttp.ClientSession()
+telegramBot = TelegramBot(config.telegramToken, session)
+telegramBot.addHandler('connect', connectHandler)
+
+ircBot = IRCBot('chat.freenode.net', 7000, 'swconnect', channels=['#archlinux-cn-offtopic'], enable_ssl=True)
+ircBot.addHandler('connect', connectHandler)
 
 loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
 loop.run_forever()

@@ -9,6 +9,7 @@ import asyncio
 class IRCBot(Bot):
     def __init__(self, server, port, nick, channels=[], enable_ssl=False, loop=asyncio.get_event_loop()):
         super().__init__(f'irc-{server}:{port}-{nick}')
+        self.channels = {}
         self.client = irc.client.Reactor()
         self.server = self.client.server()
         if enable_ssl:
@@ -25,11 +26,40 @@ class IRCBot(Bot):
     def runThread(self):
         self.client.process_forever()
     def handler(self, connection, event):
-        print('recv')
         self.loop.call_soon_threadsafe(self.onEvent, event)
+    def getChannel(self, chatname):
+        channel = Channel.getChannel(f'{self.bid}-{chatname}')
+        if channel == None:
+            channel = IRCChannel(self, chatname)
+        return channel
+    def makeMessage(self, event):
+        user = IRCUser()
+        user.setUserName(event.source)
+        if event.type == 'pubmsg':
+            channel = self.getChannel(event.target)
+        else:
+            channel = self.getChannel(event.source)
+        message = Message(channel)
+        message.setText(event.arguments[0])
+        message.setUser(user)
+        return message
     def onEvent(self, event):
-        print(event)
+        message = self.makeMessage(event)
+        if message != None:
+            self.onMessage(message)
+            message.channel.onMessage(message)
+    def sendMessage(self, channel, message):
+        # if channel.chatname.startswith('#'):
+        if message.text != None:
+            self.server.privmsg(channel.chatname, message.text)
 
-bot = IRCBot('chat.freenode.net', 7000, 'swconnect', channels=['#archlinux-cn-offtopic'], enable_ssl=True)
-loop = asyncio.get_event_loop()
-loop.run_forever()
+class IRCUser(User):
+    pass
+
+class IRCChannel(Channel):
+    def __init__(self, bot, chatname):
+        super().__init__(f'{bot.bid}-{chatname}')
+        self.bot = bot
+        self.chatname = chatname
+    def sendMessage(self, message):
+        self.bot.sendMessage(self, message)

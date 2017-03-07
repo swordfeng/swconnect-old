@@ -51,11 +51,12 @@ class TelegramBot(Bot):
                 if update['update_id'] >= self.updateId:
                     self.updateId = update['update_id'] + 1
                 message = self.makeMessage(update)
+                if message == None:
+                    continue
                 if message.user != None and message.user.userId == self.botid:
                     continue # this message is sent by us
-                if message != None:
-                    self.onMessage(message)
-                    message.channel.onMessage(message)
+                self.onMessage(message)
+                message.channel.onMessage(message)
 
 class TelegramUser(User):
     def __init__(self, userId):

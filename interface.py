@@ -38,16 +38,7 @@ class Channel:
     def sendMessage(self, message):
         raise NotImplementedError('should be overriden by subclass')
 
-class Bot:
+class Bot(Channel):
     def __init__(self, bid):
+        super().__init__(f'bot-{bid}')
         self.bid = bid
-        self.handlers = {}
-    def addHandler(self, name, handler):
-        self.handlers[name] = handler
-    def removeHandler(self, name):
-        del self.handlers[name]
-    def onMessage(self, message):
-        for hname in self.handlers:
-            self.handlers[hname](message)
-    def sendMessage(self, channel, message):
-        raise NotImplementedError('should be overriden by subclass')

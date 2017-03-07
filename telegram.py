@@ -5,18 +5,22 @@ from interface import *
 
 class TelegramBot(Bot):
     def __init__(self, token, httpSession):
+        super().__init__('telegram-{}'.format(token[:token.find(':')]))
+        self.botid = int(token[:token.find(':')])
         self.session = httpSession
         self.channels = {}
-        self.handlers = {}
         self.url = f'https://api.telegram.org/bot{token}/'
         self.updateId = 0 # must be read from config
-        #self.channelGroup = ChannelGroup('telegram') # test
         self.daemon = asyncio.Task(self.runDaemon())
         self.daemon.add_done_callback(lambda r: print(self.daemon.exception()))
+    def sendMessage(self, channel, message):
+        asyncio.ensure_future(self.request('sendMessage', {
+                'chat_id': channel.channelId,
+                'text': message.text
+            }))
     def getChannel(self, channelId):
         if channelId not in self.channels:
             self.channels[channelId] = TelegramChannel(self, channelId)
-            #self.channelGroup.addChannel(self.channels[channelId]) # test
         return self.channels[channelId]
     def makeMessage(self, update):
         if 'message' in update:
@@ -34,18 +38,6 @@ class TelegramBot(Bot):
                 pass
             return message
         return None
-    def addHandler(self, name, handler):
-        self.handlers[name] = handler
-    def removeHandler(self, name):
-        del self.handlers[name]
-    def sendMessage(self, channel, message):
-        asyncio.ensure_future(self.request('sendMessage', {
-                'chat_id': channel.channelId,
-                'text': message.text
-            }))
-    def onMessage(self, message):
-        for hname in self.handlers:
-            self.handlers[hname](message)
     async def request(self, method, params={}):
         async with self.session.post(self.url + method,
                                      data=json.dumps(params),
@@ -59,6 +51,8 @@ class TelegramBot(Bot):
                 if update['update_id'] >= self.updateId:
                     self.updateId = update['update_id'] + 1
                 message = self.makeMessage(update)
+                if message.user != None and message.user.userId == self.botid:
+                    continue # this message is sent by us
                 if message != None:
                     self.onMessage(message)
                     message.channel.onMessage(message)
@@ -70,7 +64,7 @@ class TelegramUser(User):
 
 class TelegramChannel(Channel):
     def __init__(self, bot, channelId):
-        super().__init__()
+        super().__init__(f'{bot.bid}-{channelId}')
         self.bot = bot
         self.channelId = channelId
     def sendMessage(self, message):

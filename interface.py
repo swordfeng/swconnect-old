@@ -42,3 +42,5 @@ class Bot(Channel):
     def __init__(self, bid):
         super().__init__(f'bot-{bid}')
         self.bid = bid
+    def sendMessage(self, channel, message):
+        raise NotImplementedError('should be overriden by subclass')

@@ -5,6 +5,7 @@ import irc.connection
 import ssl
 import threading
 import asyncio
+from util import printerr
 
 class IRCBot(Bot):
     def __init__(self, server, port, nick, channels=[], enable_ssl=False, loop=asyncio.get_event_loop()):
@@ -24,7 +25,10 @@ class IRCBot(Bot):
         self.thread = threading.Thread(target=self.runThread)
         self.thread.start()
     def runThread(self):
-        self.client.process_forever()
+        try:
+            self.client.process_forever()
+        except e:
+            printerr(e)
     def handler(self, connection, event):
         self.loop.call_soon_threadsafe(self.onEvent, event)
     def getChannel(self, chatname):

@@ -38,35 +38,6 @@ class Channel:
     def sendMessage(self, message):
         raise NotImplementedError('should be overriden by subclass')
 
-class ChannelGroup:
-    groups = weakref.WeakValueDictionary()
-    def getGroup(gid):
-        if gid in ChannelGroup.groups:
-            return ChannelGroup.groups[gid]
-        return None
-    def __init__(self, gid):
-        self.channels = set()
-        self.gid = gid
-        ChannelGroup.groups[gid] = self
-        self.modifier = lambda m: m
-    def addChannel(self, channel):
-        if channel not in self.channels:
-            self.channels.add(channel)
-            channel.addHandler(f'channelgroup-{self.gid}', self.onMessage)
-    def removeChannel(self, channel):
-        if channel in self.channels:
-            self.channels.remove(channel)
-            channel.removeHandler(f'channelgroup-{self.gid}')
-    def setMessageModifier(self, modifier):
-        self.modifier = modifier
-    def onMessage(self, message):
-        message = self.modifier(message)
-        if message == None:
-            return
-        for channel in self.channels:
-            if channel != message.channel:
-                channel.sendMessage(message)
-
 class Bot:
     def __init__(self, bid):
         self.bid = bid
@@ -80,4 +51,3 @@ class Bot:
             self.handlers[hname](message)
     def sendMessage(self, channel, message):
         raise NotImplementedError('should be overriden by subclass')
-

@@ -2,6 +2,7 @@
 import asyncio
 import json
 from interface import *
+from util import printerr
 
 class TelegramBot(Bot):
     def __init__(self, token, httpSession):
@@ -12,7 +13,7 @@ class TelegramBot(Bot):
         self.url = f'https://api.telegram.org/bot{token}/'
         self.updateId = 0 # must be read from config
         self.daemon = asyncio.Task(self.runDaemon())
-        self.daemon.add_done_callback(lambda r: print(self.daemon.exception()))
+        self.daemon.add_done_callback(lambda r: printerr(self.daemon.exception()))
     def sendMessage(self, channel, message):
         asyncio.ensure_future(self.request('sendMessage', {
                 'chat_id': channel.channelId,

@@ -33,6 +33,7 @@ class ChannelGroup:
     def __init__(self, groupid):
         self.channels = set()
         self.groupid = groupid
+        self.modifier = lambda m: m
     def addChannel(self, channel):
         if channel not in self.channels:
             self.channels.add(channel)
@@ -41,7 +42,10 @@ class ChannelGroup:
         if channel in self.channels:
             self.channels.remove(channel)
             channel.removeHandler(f'channelgroup-{self.groupid}')
+    def setMessageModifier(self, modifier):
+        self.modifier = modifier
     def onMessage(self, message):
+        message = self.modifier(message)
         for channel in self.channels:
             if channel != message.channel:
                 channel.sendMessage(message)

@@ -1,4 +1,6 @@
 
+import weakref
+
 class Message:
     def __init__(self, channel):
         self.channel = channel
@@ -17,8 +19,17 @@ class User:
         self.username = username
 
 class Channel:
+    channels = dict()
+    def getChannel(cid):
+        if cid in channels:
+            channel = Channel.channels[cid]()
+            if channel == None:
+                del Channel.channels[cid]
+            return channel
+        return None
     def __init__(self):
         self.handlers = {}
+        Channel.channels[id(self)] = weakref.ref(self)
     def addHandler(self, name, callback):
         self.handlers[name] = callback
     def removeHandler(self, name):

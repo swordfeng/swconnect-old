@@ -33,8 +33,7 @@ class IRCBot(Bot):
             channel = IRCChannel(self, chatname)
         return channel
     def makeMessage(self, event):
-        user = IRCUser()
-        user.setUserName(event.source)
+        user = IRCUser(event.source)
         if event.type == 'pubmsg':
             channel = self.getChannel(event.target)
         else:
@@ -54,7 +53,10 @@ class IRCBot(Bot):
             self.server.privmsg(channel.chatname, message.text)
 
 class IRCUser(User):
-    pass
+    def __init__(self, name):
+        super().__init__()
+        self.setUserName(name[:name.find('!')])
+        self.target = name
 
 class IRCChannel(Channel):
     def __init__(self, bot, chatname):

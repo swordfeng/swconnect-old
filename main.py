@@ -1,5 +1,5 @@
 
-from telegram import *
+from impl_telegram import *
 from interface import ChannelGroup, Message
 import asyncio
 import aiohttp

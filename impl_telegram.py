@@ -14,7 +14,7 @@ class TelegramBot(Bot):
         self.updateId = 0 # must be read from config
         self.daemon = asyncio.Task(self.runDaemon())
         self.daemon.add_done_callback(lambda r: printerr(self.daemon.exception()))
-    def sendMessage(self, channel, message):
+    def sendChannelMessage(self, channel, message):
         asyncio.ensure_future(self.request('sendMessage', {
                 'chat_id': channel.channelId,
                 'text': message.text
@@ -70,4 +70,4 @@ class TelegramChannel(Channel):
         self.bot = bot
         self.channelId = channelId
     def sendMessage(self, message):
-        self.bot.sendMessage(self, message)
+        self.bot.sendChannelMessage(self, message)

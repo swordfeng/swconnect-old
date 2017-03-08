@@ -31,7 +31,7 @@ class XMPPBot(Bot):
         self.client.send_presence()
         self.client.get_roster()
 
-    def sendMessage(self, channel, message):
+    def sendChannelMessage(self, channel, message):
         self.client.send_message(mto=channel.chatfrom, mtype=channel.chattype, mbody=message.text)
 
     def onEventMessage(self, msg):
@@ -50,7 +50,7 @@ class XMPPChannel(Channel):
         self.chattype = chattype
         self.chatfrom = chatfrom
     def sendMessage(self, message):
-        self.bot.sendMessage(self, message)
+        self.bot.sendChannelMessage(self, message)
 
 class XMPPUser(User):
     def __init__(self, chatfrom):

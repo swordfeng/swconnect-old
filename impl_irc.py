@@ -51,7 +51,7 @@ class IRCBot(Bot):
         if message != None:
             self.onMessage(message)
             message.channel.onMessage(message)
-    def sendMessage(self, channel, message):
+    def sendChannelMessage(self, channel, message):
         # if channel.chatname.startswith('#'):
         if message.text != None:
             self.server.privmsg(channel.chatname, message.text)
@@ -68,4 +68,4 @@ class IRCChannel(Channel):
         self.bot = bot
         self.chatname = chatname
     def sendMessage(self, message):
-        self.bot.sendMessage(self, message)
+        self.bot.sendChannelMessage(self, message)

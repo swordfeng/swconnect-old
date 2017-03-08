@@ -11,7 +11,7 @@ session = aiohttp.ClientSession()
 telegramBot = TelegramBot(config.telegramToken, session)
 telegramBot.addHandler('connect', connectHandler)
 
-ircBot = IRCBot('chat.freenode.net', 7000, 'swconnect', channels=['#archlinux-cn-offtopic'])
+ircBot = IRCBot('chat.freenode.net', 7000, 'swconnect', password=config.ircPassword, channels=['#archlinux-cn-offtopic'])
 ircBot.addHandler('connect', connectHandler)
 
 xmppBot = XMPPBot('swconnect@xmpp.jp', config.xmppPassword)

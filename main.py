@@ -6,6 +6,7 @@ import asyncio
 import aiohttp
 from connect import connectHandler
 import config
+import signal
 
 session = aiohttp.ClientSession()
 telegramBot = TelegramBot(config.telegramToken, session)
@@ -18,4 +19,16 @@ xmppBot = XMPPBot('swconnect@xmpp.jp', config.xmppPassword)
 xmppBot.addHandler('connect', connectHandler)
 
 loop = asyncio.get_event_loop()
+
+def exitHandler(signum, frame):
+    telegramBot.stop()
+    xmppBot.stop()
+    ircBot.stop()
+    loop.stop()
+
+signal.signal(signal.SIGINT, exitHandler)
+
+print('ready, now run the loop')
 loop.run_forever()
+
+print('exit')

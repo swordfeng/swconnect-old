@@ -19,6 +19,8 @@ class TelegramBot(Bot):
                 'chat_id': channel.channelId,
                 'text': message.text
             }))
+    def stop(self):
+        self.daemon.cancel()
     def getChannel(self, channelId):
         if channelId not in self.channels:
             self.channels[channelId] = TelegramChannel(self, channelId)

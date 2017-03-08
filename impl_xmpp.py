@@ -43,6 +43,9 @@ class XMPPBot(Bot):
             self.loop.call_soon_threadsafe(self.onMessage, message)
             self.loop.call_soon_threadsafe(message.channel.onMessage, message)
 
+    def stop(self):
+        self.client.disconnect(wait=True)
+
 class XMPPChannel(Channel):
     def __init__(self, bot, chattype, chatfrom):
         super().__init__(f'xmpp-{bot.jid}-{chattype}-{chatfrom}')

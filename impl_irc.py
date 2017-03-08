@@ -23,12 +23,17 @@ class IRCBot(Bot):
             self.server.join(ch)
         self.loop = loop
         self.thread = threading.Thread(target=self.runThread)
+        self.stopped = False
         self.thread.start()
     def runThread(self):
         try:
-            self.client.process_forever()
+            while not self.stopped:
+                self.client.process_once(timeout=0.2)
         except e:
             printerr(e)
+    def stop(self):
+        self.stopped = True
+        self.thread.join()
     def handler(self, connection, event):
         self.loop.call_soon_threadsafe(self.onEvent, event)
     def getChannel(self, chatname):

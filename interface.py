@@ -44,3 +44,5 @@ class Bot(Channel):
         self.bid = bid
     def sendChannelMessage(self, channel, message):
         raise NotImplementedError('should be overriden by subclass')
+    def stop(self):
+        pass

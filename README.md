@@ -17,3 +17,4 @@ Todo
 ===
 * `connect.py` config persistancy
 * `Message` non-text/multimedia/control message support
+* exception handling

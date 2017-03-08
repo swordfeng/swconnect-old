@@ -12,3 +12,8 @@ All ids are like `{protocol}-{bot_identifier}-{channel_identifier}`
 Call `onMessage` on `Bot` and `Channel` when receive message, override `sendMessage` on them  
 The `onMessage` should be called on the main thread, use `loop.call_soon_threadsafe` if multithreaded  
 Tell me if you have anything uncertain  
+
+Todo
+===
+* `connect.py` config persistancy
+* `Message` non-text/multimedia/control message support

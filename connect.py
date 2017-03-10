@@ -1,6 +1,6 @@
 
 
-from interface import Message
+from interface import Message, Channel
 from group import ConnectedChannel
 
 def messageMod(message):
@@ -12,6 +12,7 @@ def messageMod(message):
 
 connectChannels = {}
 connectGroupId = 0
+connectorChannel = Channel('connector')
 
 def newConnectGroup(channel):
     global connectGroupId
@@ -42,11 +43,11 @@ def connectHandler(message):
     if message.text.startswith(prefix):
         command = message.text[len(prefix):].strip()
         if command == 'channel':
-            rep = Message(message.channel)
+            rep = Message(connectorChannel)
             rep.setText(message.channel.cid)
             message.channel.sendMessage(rep)
         elif command == 'group':
-            rep = Message(message.channel)
+            rep = Message(connectorChannel)
             if message.channel.cid not in connectChannels:
                 rep.setText('undefined')
             else:
@@ -55,14 +56,14 @@ def connectHandler(message):
         elif command == 'leavegroup':
             if message.channel.cid in connectChannels:
                 leaveConnectGroup(message.channel)
-                rep = Message(message.channel)
+                rep = Message(connectorChannel)
                 rep.setText('success')
                 message.channel.sendMessage(rep)
         elif command == 'newgroup':
             if message.channel.cid in connectChannels:
                 leaveConnectGroup(message.channel)
             group = newConnectGroup(message.channel)
-            rep = Message(message.channel)
+            rep = Message(connectorChannel)
             rep.setText(f'created {group.cid}')
             message.channel.sendMessage(rep)
         elif command.startswith('joingroup '):
@@ -71,7 +72,7 @@ def connectHandler(message):
             gcid = command[10:].strip()
             try:
                 group = joinConnectGroup(message.channel, gcid)
-                rep = Message(message.channel)
+                rep = Message(connectorChannel)
                 rep.setText(f'joined {group.cid}')
                 message.channel.sendMessage(rep)
             except BaseException:

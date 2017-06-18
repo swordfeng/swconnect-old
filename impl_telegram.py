@@ -1,11 +1,12 @@
 
 import asyncio
+import aiohttp
 import json
 from interface import *
 from util import printerr
 
 class TelegramBot(Bot):
-    def __init__(self, token, httpSession):
+    def __init__(self, token, httpSession=aiohttp.ClientSession()):
         super().__init__('telegram-{}'.format(token[:token.find(':')]))
         self.botid = int(token[:token.find(':')])
         self.session = httpSession

@@ -3,13 +3,11 @@ from impl_telegram import *
 from impl_irc import *
 from impl_xmpp import *
 import asyncio
-import aiohttp
 from connect import connectHandler
 import config
 import signal
 
-session = aiohttp.ClientSession()
-telegramBot = TelegramBot(config.telegramToken, session)
+telegramBot = TelegramBot(config.telegramToken)
 telegramBot.addHandler('connect', connectHandler)
 
 

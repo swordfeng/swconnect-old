@@ -39,7 +39,6 @@ class Channel:
     def onMessage(self, message):
         for hname in self.handlers:
             self.handlers[hname](message)
-        return self
     def sendMessage(self, message):
         raise NotImplementedError('should be overriden by subclass')
 
